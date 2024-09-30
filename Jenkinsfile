@@ -27,10 +27,18 @@ pipeline {
       }
 
       stage('Build') {
-         steps {
-            sh '''mvn clean package'''
-         }
-      }
+            steps {
+                script {
+                    // Use the full path to Maven executable
+                    def mvnHome = tool 'Maven'
+                    if (isUnix()) {
+                        sh "'${mvnHome}/bin/mvn' clean package"
+                    } else {
+                        bat(/"${mvnHome}\bin\mvn" clean package/)
+                    }
+                }
+            }
+        }
 
          stage('Sonarqube Analysis') {
             steps {
